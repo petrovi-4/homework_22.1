@@ -1,6 +1,8 @@
-from django.views.generic import TemplateView, DetailView
+from django.urls import reverse_lazy
+from django.views.generic import TemplateView, DetailView, CreateView, ListView, UpdateView, DeleteView
 
-from catalog.models import Product
+from catalog.forms import ProductForm, VersionForm
+from catalog.models import Product, Version
 
 
 class IndexView(TemplateView):
@@ -39,4 +41,53 @@ class ProductDetailView(DetailView):
         context_data = super().get_context_data(**kwargs)
         product_item = Product.objects.get(pk=self.kwargs.get('pk'))
         context_data['title'] = product_item.product_name
+        if product_item.version_set.filter(is_active=True):
+            context_data['version'] = product_item.version_set.filter(is_active=True).last()
+        else:
+            context_data['version'] = None
         return context_data
+
+
+class ProductCreateView(CreateView):
+    model = Product
+    form_class = ProductForm
+    success_url = reverse_lazy('catalog:list_product')
+
+
+class ProductListView(ListView):
+    model = Product
+    extra_context = {
+        'title': 'Список товаров'
+    }
+
+
+class ProductUpdateView(UpdateView):
+    model = Product
+    form_class = ProductForm
+    success_url = reverse_lazy('catalog:list_product')
+
+
+class ProductDeleteView(DeleteView):
+    model = Product
+    success_url = reverse_lazy('catalog:list_product')
+
+
+class VersionCreateView(CreateView):
+    model = Version
+    form_class = VersionForm
+    success_url = reverse_lazy('catalog:list_product')
+
+
+class VersionDetailView(DetailView):
+    model = Version
+
+
+class VersionUpdateView(UpdateView):
+    model = Version
+    form_class = VersionForm
+    success_url = reverse_lazy('catalog:list_product')
+
+
+class VersionDeleteView(DeleteView):
+    model = Version
+    success_url = reverse_lazy('catalog:list_product')
