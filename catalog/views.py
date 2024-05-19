@@ -1,3 +1,4 @@
+from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView, DetailView, CreateView, ListView, UpdateView, DeleteView
 
@@ -76,6 +77,12 @@ class VersionCreateView(CreateView):
     model = Version
     form_class = VersionForm
     success_url = reverse_lazy('catalog:list_product')
+
+    def form_valid(self, form):
+        product_id = self.kwargs['pk']
+        product = get_object_or_404(Product, id=product_id)
+        form.instance.product = product
+        return super().form_valid(form)
 
 
 class VersionDetailView(DetailView):

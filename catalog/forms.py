@@ -12,7 +12,6 @@ class StyleFormMixin:
 
 
 class ProductForm(StyleFormMixin, forms.ModelForm):
-
     class Meta:
         model = Product
         fields = '__all__'
@@ -23,9 +22,16 @@ class ProductForm(StyleFormMixin, forms.ModelForm):
             raise forms.ValidationError('Нельзя использовать запрещенные слова')
         return product_name
 
+    def clean_product_description(self):
+        description = self.cleaned_data.get('description')
+        if set(description.lower().split()).intersection(set(FORBIDDEN_WORDS)):
+            raise forms.ValidationError('Нельзя использовать запрщенные слова')
+        if len(description) < 10 or len(description) > 200:
+            raise forms.ValidationError('Описание должно быть от 10 до 200 символов')
+        return description
+
 
 class VersionForm(StyleFormMixin, forms.ModelForm):
-
     class Meta:
         model = Version
         fields = '__all__'
