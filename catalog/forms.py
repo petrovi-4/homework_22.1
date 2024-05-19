@@ -22,7 +22,7 @@ class ProductForm(StyleFormMixin, forms.ModelForm):
             raise forms.ValidationError('Нельзя использовать запрещенные слова')
         return product_name
 
-    def clean_product_description(self):
+    def clean_description(self):
         description = self.cleaned_data.get('description')
         if set(description.lower().split()).intersection(set(FORBIDDEN_WORDS)):
             raise forms.ValidationError('Нельзя использовать запрщенные слова')
