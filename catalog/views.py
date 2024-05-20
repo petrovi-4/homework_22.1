@@ -76,13 +76,17 @@ class ProductDeleteView(DeleteView):
 class VersionCreateView(CreateView):
     model = Version
     form_class = VersionForm
+    template_name = 'catalog/version_form.html'  # добавлено
     success_url = reverse_lazy('catalog:list_product')
 
     def form_valid(self, form):
-        product_id = self.kwargs['pk']
-        product = get_object_or_404(Product, id=product_id)
+        product = form.cleaned_data['product']
         form.instance.product = product
         return super().form_valid(form)
+        # product_id = self.kwargs['pk']
+        # product = get_object_or_404(Product, id=product_id)
+        # form.instance.product = product
+        # return super().form_valid(form)
 
 
 class VersionDetailView(DetailView):
